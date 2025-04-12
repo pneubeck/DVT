@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,4 +17,19 @@ var vehicles = []structs.Vehicle{
 
 func GetVehicles(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, vehicles)
+}
+
+func PostVehicle(c *gin.Context) {
+	var newVehicle structs.Vehicle
+
+	// Call BindJSON to bind the received JSON to
+	// newAlbum.
+	if err := c.BindJSON(&newVehicle); err != nil {
+		fmt.Print(err)
+		return
+	}
+
+	// Add the new album to the slice.
+	vehicles = append(vehicles, newVehicle)
+	c.IndentedJSON(http.StatusCreated, newVehicle)
 }

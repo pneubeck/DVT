@@ -1,8 +1,9 @@
-package controller
+package VehicleController
 
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pneubeck/DVT/structs"
@@ -19,17 +20,26 @@ func GetVehicles(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, vehicles)
 }
 
+func GetVehicleById(c *gin.Context) {
+	id := c.Param("id")
+
+	for _, a := range vehicles {
+		if strconv.Itoa(a.ID) == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "vehicle not found"})
+}
+
 func PostVehicle(c *gin.Context) {
 	var newVehicle structs.Vehicle
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
 	if err := c.BindJSON(&newVehicle); err != nil {
 		fmt.Print(err)
 		return
 	}
 
-	// Add the new album to the slice.
 	vehicles = append(vehicles, newVehicle)
 	c.IndentedJSON(http.StatusCreated, newVehicle)
 }
